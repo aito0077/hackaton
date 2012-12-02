@@ -41,7 +41,11 @@
     }
   });
 
-    var map;
+    var map; 
+    var my_latitude = -15.792254, 
+        my_longitude = -58.20996;
+        posisionate_in_my_location = true
+        zoom_my_location = 12;
 
     Template.map.created = function(){
        //initialize();
@@ -49,8 +53,65 @@
     };
 
     //Google maps
+    function initialize() {
+        console.log('inicializando');
+        
 
-    /*
+        var results = [
+            {lat: -34.584111, long:-58.427194},
+            {lat: -34.574642, long:-58.441264},
+            {lat: -34.573333, long:-58.441564},
+            {lat: -34.574444, long:-58.444564}
+        ];
+        
+        var latlng = new google.maps.LatLng(my_latitude, my_longitude);
+        var myOptions = {
+            zoom: 3,
+            center: latlng,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+        _.each(results, function(model) {
+            var latlng_mark = new google.maps.LatLng(model.lat,model.long);
+            var marker = new google.maps.Marker({
+                position: latlng_mark,
+                map: map
+            });
+        });
+
+        if(posisionate_in_my_location) {
+            detect_my_location(); 
+        }
+    }
+
+    function detect_my_location() {
+        if(navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                my_latitude = position.coords.latitude;
+                my_longitude = position.coords.longitude;
+                console.log('Mi latitude: '+my_latitude+' - longitud: '+my_longitude);
+                var pos = new google.maps.LatLng(my_latitude, my_longitude);
+                map.setCenter(pos);
+                map.setZoom(zoom_my_location);
+                /*
+
+                var infowindow = new google.maps.InfoWindow({
+                    map: map,
+                    position: pos,
+                    content: 'Estoy aqui.'
+                });
+                map.setCenter(pos);
+                */
+            }, function() {
+            handleNoGeolocation(true);
+            });
+        } else {
+            // Browser doesn't support Geolocation
+            handleNoGeolocation(false);
+        }
+    }
+
     function handleNoGeolocation(errorFlag) {
         if (errorFlag) {
             var content = 'Error: The Geolocation service failed.';
@@ -60,74 +121,14 @@
 
         var options = {
             map: map,
-            position: new google.maps.LatLng(60, 105),
+            position: new google.maps.LatLng(my_latitude, my_longitude),
             content: content
         };
 
         var infowindow = new google.maps.InfoWindow(options);
         map.setCenter(options.position);
     }
-    */
-    function initialize() {
-        console.log('inicializando');
 
-        var results = [
-            {lat: -34.584111, long:-58.427194},
-            {lat: -34.574642, long:-58.441264},
-            {lat: -34.573333, long:-58.441564},
-            {lat: -34.574444, long:-58.444564}
-        ];
-        
-        var latlng = new google.maps.LatLng(-15.792254,-58.20996);
-        var myOptions = {
-            zoom: 3,
-            center: latlng,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-
-        _.each(results, function(model) {
-            var latlng_mark = new google.maps.LatLng(model.lat,model.long);
-            var marker = new google.maps.Marker({
-                position: latlng_mark,
-                map: map
-            });
-        });
-        marker = new google.maps.Marker({
-            position: latlng,
-            map: map
-        });
-
-        /*
-        var mapOptions = {
-            zoom: 6,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-
-        map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
-
-        // Try HTML5 geolocation
-        if(navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                var pos = new google.maps.LatLng(position.coords.latitude,
-                position.coords.longitude);
-
-                var infowindow = new google.maps.InfoWindow({
-                map: map,
-                position: pos,
-                content: 'Location found using HTML5.'
-                });
-
-                map.setCenter(pos);
-            }, function() {
-            handleNoGeolocation(true);
-            });
-        } else {
-            // Browser doesn't support Geolocation
-            handleNoGeolocation(false);
-        }
-        */
-    }
 
 
 
