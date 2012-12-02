@@ -7,7 +7,7 @@
 
 
 
-    Template.map.rendered = function(){
+    Template.mapa.rendered = function(){
         console.log('map rendered');
 
        //find_pais_indicador('ARG', 'NY.ADJ.NNTY.KD');
