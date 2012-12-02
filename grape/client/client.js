@@ -41,11 +41,12 @@
     }
   });
 
-    var map; 
+    var map, my_mark; 
     var my_latitude = -15.792254, 
         my_longitude = -58.20996;
         posisionate_in_my_location = true
-        zoom_my_location = 12;
+        zoom_my_location = 13;
+
 
     Template.map.created = function(){
        //initialize();
@@ -68,9 +69,27 @@
         var myOptions = {
             zoom: 3,
             center: latlng,
+            mapMaker: true,
             mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+        /*
+        google.maps.event.addListener(map, 'dblclick', function(e) {
+            //console.dir(e);
+            console.log('Latitude: '+e.latLng.lat()+' - Long: '+e.latLng.lng());
+        });
+        */
+
+        google.maps.event.addListener(map, 'click', function(e) {
+            if (!my_mark) {
+                my_mark = new google.maps.Marker({ map: map });
+            }
+
+            my_mark.setPosition(e.latLng);
+        });
+
+
 
         _.each(results, function(model) {
             var latlng_mark = new google.maps.LatLng(model.lat,model.long);
