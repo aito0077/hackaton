@@ -1,5 +1,9 @@
 <head>
-<title>grape</title>
+    <title>grape</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <link href="/maps/documentation/javascript/examples/default.css" rel="stylesheet">
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
 </head>
 
 <body>
@@ -7,6 +11,8 @@
     {{ loginButtons }}
     {{> iniciativas }}
     {{> iniciativaForm}}
+
+    {{> map }}
 </body>
 <template name="iniciativas">
     {{#each list}}
@@ -111,3 +117,10 @@
             </form>
 
     </template>
+
+    <template name="map">
+        Mapa
+        <div id="map_canvas" style="height:500px; width:500px;"></div>
+        Fin Mapa
+    </template>
+
