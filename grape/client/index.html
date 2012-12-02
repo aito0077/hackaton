@@ -1,0 +1,25 @@
+<head>
+  <title>Pequeñas Grandes Ideas</title>
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+  {{> nav}}
+  <div class="container">
+    <div class="pageMargins"></div>
+    {{> layout}}
+  </div>
+</body>
+
+<template name="info">
+  {{#if mostrarMensaje}}
+  {{> mensaje}}
+  {{/if}}
+</template>
+
+<template name="mensaje">
+  <div class="alert alert-{{tipo}}">
+    <button type="button" class="close" data-dismiss="alert">×</button>
+    {{texto}}
+  </div>
+</template>

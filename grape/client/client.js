@@ -1,154 +1,213 @@
-  Session.set("location","Buenos Aires");
-  Session.set("tareas",null);
+Session.set("location","Buenos Aires");
+Session.set("tareas",null);
+Session.set("selected",null);
+Session.set("page","home");
+Session.set('mostrarMensaje',false);
 
-  Template.iniciativaForm.location = function(){
-    return Session.get("location");
-  }; 
+Template.iniciativaForm.location = function(){
+  return Session.get("location");
+};
 
-  // TAREAS
-  var tareas = [];
-  Template.tareasForm.tareas = function(){
-      return Session.get("tareas");
-  };
-
-  Template.iniciativas.list = function(){
-    return Iniciativas.find();
+Template.nav.events({
+  'click #nav-home':function(){
+    Session.set('page','home');
+  },
+  'click .nav-iniciativas':function(event){
+    Session.set('filtro',$(event.currentTarget).attr('data-filter'));
+    Session.set('titulo-principal',$(event.currentTarget).attr('rel'));
+    Session.set('imagen-principal',$(event.currentTarget).attr('data-image'));
+    Session.set('page','iniciativas');
+  },
+  'click #nav-descripcion_iniciativa':function(event){
+    Session.set('page','descripcion_iniciativa');
+  },
+  'click #nav-perfil':function(event){
+    Session.set('page','perfil');
   }
+})
 
-  Template.iniciativaForm.events({
-    'click .agregarTarea' : function(){
-        tareas.push({
-            nombre:$('#tareaNombre').val(),
-            categoria:$('#tareaCategoria').val(),
-            estado:0
-        });
+function mostrarMensaje(texto,tipo){
+  Session.set('mostrarMensaje',true);
+  Session.set('mensajeTexto',texto);
+  Session.set('mensajeTipo',tipo);
+}
 
-        Session.set("tareas",tareas);
-        if (typeof console !== 'undefined'){
-            console.log(tareas);
-        }
-    },
-    'click .guardarIniciativa':function(){
-        var res = Iniciativas.insert({
-            titulo:$('#iniTitulo').val(),
-            descripcion:$('#iniDescripcion').val(),
-            categoria:$('#iniCategoria').val(),
-            tipo:$('#iniTipo').val(),
-            titulo:$('#iniTitulo').val(),
-            tareas:Session.get('tareas')
-        });
-        console.log(res);
+var tareas = [];
+Template.tareasForm.tareas = function(){
+  return Session.get("tareas");
+};
+
+Template.ListadoIniciativas.count = function(){
+  return Iniciativas.find({categoria:Session.get("filtro")}).count();
+}
+
+Template.ListadoIniciativas.listado = function(){
+  return Iniciativas.find({categoria:Session.get("filtro")});
+}
+
+Template.ListadoIniciativas.tituloPrincipal = function(){
+  return Session.get('titulo-principal');
+}
+
+Template.ListadoIniciativas.imagenPrincipal = function(){
+  return Session.get('imagen-principal');
+}
+
+Template.ListadoIniciativas.events({
+  'click .iniciativa': function(event){
+    Session.set('page','descripcion_iniciativa');
+    Session.set('iniciativa',$(event.currentTarget).attr('data-id'));
+  }
+})
+
+Template.iniciativas.list = function(){
+  return Iniciativas.find();
+}
+
+Template.layout.home = function(){
+  return Session.equals('page','home');
+}
+
+Template.layout.iniciativas = function(){
+  return Session.equals('page','iniciativas');
+}
+
+Template.layout.descripcion_iniciativa = function(){
+  return Session.equals('page','descripcion_iniciativa');
+}
+
+Template.layout.perfil = function(){
+  return Session.equals('page','perfil');
+}
+
+
+Template.medioAmbienteInicio.count = function(){
+  return Iniciativas.find({categoria:"Medio Ambiente"}).count();
+}
+Template.medioAmbienteInicio.listado = function(){
+  return Iniciativas.find({categoria:"Medio Ambiente"});
+}
+
+Template.medioAmbienteInicio.events({
+  'click .iniciativa': function(event){
+    Session.set('page','descripcion_iniciativa');
+    Session.set('iniciativa',$(event.currentTarget).attr('data-id'));
+  }
+})
+
+Template.educacionInicio.count = function(){
+  return Iniciativas.find({categoria:"Educacion"}).count();
+}
+Template.educacionInicio.listado = function(){
+  return Iniciativas.find({categoria:"Educacion"});
+}
+Template.educacionInicio.events({
+  'click .iniciativa': function(event){
+    Session.set('page','descripcion_iniciativa');
+    Session.set('iniciativa',$(event.currentTarget).attr('data-id'));
+  }
+})
+
+
+Template.desarrolloInicio.count = function(){
+  return Iniciativas.find({categoria:"Desarrollo"}).count();
+}
+Template.desarrolloInicio.listado = function(){
+  return Iniciativas.find({categoria:"Desarrollo"});
+}
+Template.desarrolloInicio.events({
+  'click .iniciativa': function(event){
+    Session.set('page','descripcion_iniciativa');
+    Session.set('iniciativa',$(event.currentTarget).attr('data-id'));
+  }
+})
+
+Template.arteCulturaInicio.count = function(){
+  return Iniciativas.find({categoria:"Arte y Cultura"}).count();
+}
+Template.arteCulturaInicio.listado = function(){
+  return Iniciativas.find({categoria:"Arte y Cultura"});
+}
+Template.arteCulturaInicio.events({
+  'click .iniciativa': function(event){
+    Session.set('page','descripcion_iniciativa');
+    Session.set('iniciativa',$(event.currentTarget).attr('data-id'));
+  }
+})
+
+Template.info.mostrarMensaje = function(){
+  return Session.get('mostrarMensaje');
+}
+
+Template.mensaje.tipo = function(){
+  return Session.get('mensajeTipo');
+}
+
+Template.mensaje.texto = function(){
+  return Session.get('mensajeTexto');
+}
+
+Template.sesumaron.participantes = function(){
+  return Participantes.find({iniciativa:Session.get('iniciativa')});
+}
+
+Template.iniciativa.detail = function () {
+  return Iniciativas.findOne(Session.get("iniciativa"));
+};
+
+Template.sidebarDatos.events({
+  'click .participar': function(){
+      ini = Iniciativas.findOne(Session.get('iniciativa'));
+      // deberia mostrar las tareas y elegir una para unirse, pero hace suenho:
+      if (Meteor.userId() === null){
+       mostrarMensaje('Debes ingresar al sitio para participar :)', 'error');
+       return;
+      }
+      if ( 
+       Participantes.find({ iniciativa:ini._id,usuario:Meteor.userId()}).count()>0 ){
+       mostrarMensaje('Ya estas participando de esta iniciativa! :)', 'block');
+      return;
     }
-  });
 
-    var map, my_mark; 
-    var my_latitude = -15.792254, 
-        my_longitude = -58.20996;
-        posisionate_in_my_location = true
-        zoom_my_location = 13;
-
-
-    Template.map.created = function(){
-       //initialize();
-       google.maps.event.addDomListener(window, 'load', initialize);
-    };
-
-    //Google maps
-    function initialize() {
-        console.log('inicializando');
-        
-
-        var results = [
-            {lat: -34.584111, long:-58.427194},
-            {lat: -34.574642, long:-58.441264},
-            {lat: -34.573333, long:-58.441564},
-            {lat: -34.574444, long:-58.444564}
-        ];
-        
-        var latlng = new google.maps.LatLng(my_latitude, my_longitude);
-        var myOptions = {
-            zoom: 3,
-            center: latlng,
-            mapMaker: true,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-
-        /*
-        google.maps.event.addListener(map, 'dblclick', function(e) {
-            //console.dir(e);
-            console.log('Latitude: '+e.latLng.lat()+' - Long: '+e.latLng.lng());
-        });
-        */
-
-        google.maps.event.addListener(map, 'click', function(e) {
-            if (!my_mark) {
-                my_mark = new google.maps.Marker({ map: map });
-            }
-
-            my_mark.setPosition(e.latLng);
-        });
+    var res = Participantes.insert({
+      iniciativa:ini._id,
+      usuario:Meteor.userId()
+    });
+  }
+});
 
 
+Template.iniciativaForm.events({
+  'click .agregarTarea' : function(){
+    tareas.push({
+      nombre:$('#tareaNombre').val(),
+      categoria:$('#tareaCategoria').val(),
+      estado:0
+    });
 
-        _.each(results, function(model) {
-            var latlng_mark = new google.maps.LatLng(model.lat,model.long);
-            var marker = new google.maps.Marker({
-                position: latlng_mark,
-                map: map
-            });
-        });
-
-        if(posisionate_in_my_location) {
-            detect_my_location(); 
-        }
+    Session.set("tareas",tareas);
+    if (typeof console !== 'undefined'){
+      console.log(tareas);
     }
-
-    function detect_my_location() {
-        if(navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                my_latitude = position.coords.latitude;
-                my_longitude = position.coords.longitude;
-                console.log('Mi latitude: '+my_latitude+' - longitud: '+my_longitude);
-                var pos = new google.maps.LatLng(my_latitude, my_longitude);
-                map.setCenter(pos);
-                map.setZoom(zoom_my_location);
-                /*
-
-                var infowindow = new google.maps.InfoWindow({
-                    map: map,
-                    position: pos,
-                    content: 'Estoy aqui.'
-                });
-                map.setCenter(pos);
-                */
-            }, function() {
-            handleNoGeolocation(true);
-            });
-        } else {
-            // Browser doesn't support Geolocation
-            handleNoGeolocation(false);
-        }
+  },
+  'click .guardarIniciativa':function(){
+    if (Meteor.userId() === null){
+      mostrarMensaje('Debes ingresar al sitio para participar :)', 'error');
+      return;
     }
-
-    function handleNoGeolocation(errorFlag) {
-        if (errorFlag) {
-            var content = 'Error: The Geolocation service failed.';
-        } else {
-            var content = 'Error: Your browser doesn\'t support geolocation.';
-        }
-
-        var options = {
-            map: map,
-            position: new google.maps.LatLng(my_latitude, my_longitude),
-            content: content
-        };
-
-        var infowindow = new google.maps.InfoWindow(options);
-        map.setCenter(options.position);
-    }
-
-
-
-
+    var res = Iniciativas.insert({
+      creador: this.userId,
+      titulo:$('#iniTitulo').val(),
+      descripcion:$('#iniDescripcion').val(),
+      categoria:$('#iniCategoria').val(),
+      tipo:$('#iniTipo').val(),
+      titulo:$('#iniTitulo').val(),
+      tareas:Session.get('tareas')
+    });
+    $('#iniciativaForm').each (function(){
+      this.reset();
+    });
+    
+  }
+});
 

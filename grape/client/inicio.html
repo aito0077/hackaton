@@ -1,0 +1,120 @@
+          <template name="inicio">
+          	<div class="span12">
+
+          		<div class="hero-unit welcomeMsg">
+          			<h1>Grandes Pequeñas Ideas</h1>
+          			<p>Queremos ayudar a personas con iniciativas positivas para su comunidad y a quienes quieren colaborar con sus habilidades en fines comunitarios. Les damos la posibilidad de organizarse y convocar a más personas para realizar acciones concretas relacionadas con la Educación, el Medioambiente, el Desarrollo Social y el Arte y la Cultura. 
+          			</p>
+          		</div>
+
+          		<div class="Categoria">
+          			<ul class="thumbnails">
+
+          				<div>
+          					<li class="span3">
+          						<div class="thumbnail"><img src="http://minamistudios.com/hack/images/medioAmbiente.png" alt="">
+          							<h4>Medio Ambiente</h4>
+          						</div>
+          						{{> medioAmbienteInicio}}
+          					</li>
+          				</div>
+
+          				<div>
+          					<li class="span3">
+          						<div class="thumbnail"><img src="http://minamistudios.com/hack/images/educacion.png" alt="">
+          							<h4>Educación</h4>
+          						</div>
+          						{{> educacionInicio}}
+          					</li>
+          				</div>
+
+          				<div>
+          					<li class="span3">
+          						<div class="thumbnail"><img src="http://minamistudios.com/hack/images/desarrollo.png" alt="">
+          							<h4>Desarrollo</h4>
+
+          						</div>
+          						{{> desarrolloInicio}}
+          					</li>
+          				</div>
+
+          				<div>
+          					<li class="span3">
+          						<div class="thumbnail"><img src="http://minamistudios.com/hack/images/artes.png" alt="">
+          							<h4>Arte y Cultura</h4>
+          						</div>
+          						{{> arteCulturaInicio}}
+          					</li>
+          				</div>
+
+          			</ul>
+          		</div>
+          		<br><br>
+          		{{> mapa}}
+          		{{> iniciativaForm }}
+          	</div>
+          </template>
+
+          <template name="mapa">
+          	<div class="span7 map">
+          	</div>
+          </template>
+
+          <template name="medioAmbienteInicio">
+          	<div class="span3">
+          		<h5>Iniciativas <span class="badge">{{count}}</span></h5> 
+          		<ul class="media-list">
+          			{{#each listado }}
+          			{{> ItemListadoInicio}}
+          			{{/each}}
+          		</ul>
+          	</div>
+          </template>
+
+          <template name="educacionInicio">
+          	<div class="span3">
+          		<h5>Iniciativas <span class="badge">{{count}}</span></h5>
+          		<ul class="media-list">
+          			{{#each listado }}
+          			{{> ItemListadoInicio}}
+          			{{/each}}
+          		</ul>
+          	</div>
+          </template>
+
+          <template name="desarrolloInicio">
+          	<div class="span3">
+          		<h5>Iniciativas <span class="badge">{{count}}</span></h5>
+          		<ul class="media-list">
+          			{{#each listado }}
+          			{{> ItemListadoInicio}}
+          			{{/each}}
+          		</ul>
+          	</div>
+          </template>
+
+          <template name="arteCulturaInicio">
+          	<div class="span3">
+          		<h5>Iniciativas <span class="badge">{{count}}</span></h5>
+          		<ul class="media-list">
+          			{{#each listado }}
+          			{{> ItemListadoInicio}}
+          			{{/each}}
+          		</ul>
+          	</div>
+          </template>
+
+          <template name="ItemListadoInicio">
+          	<li class="media">
+          		<a class="pull-left" href="#">
+          			<img class="media-object" src="http://minamistudios.com/hack/images/persona1.png">
+          		</a>
+          		<div class="media-body">
+          			<h3><a class="iniciativa" data-id="{{_id}}" href="#">{{titulo}}</a></h3>
+          			<div class="media">
+          				<p class="descSmall">{{descripcion}}</p>
+          				<span><img src="http://minamistudios.com/hack/images/praise.png"> <span class="small2">123</small> </span>
+          			</div>
+          		</div>
+          	</li>      	
+          </template>

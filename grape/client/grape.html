@@ -1,19 +1,40 @@
 <head>
     <title>grape</title>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <link href="/maps/documentation/javascript/examples/default.css" rel="stylesheet">
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
 </head>
 
 <body>
+    {{#if currentPage "iniciativas"}}
+        {{> page_iniciativas }}
+    {{/if}}
+    {{#if currentPage "map"}}
+        {{> page_map }}
+    {{/if}}
+
+    {{#if currentPage "charts"}}
+        {{> page_charts}}
+    {{/if}}
+
+</body>
+
+<template name="page_iniciativas">
     <a href="#iniciativaForm" role="button" class="btn" data-toggle="modal">Launch demo modal</a>
     {{ loginButtons }}
     {{> iniciativas }}
     {{> iniciativaForm}}
+</template>
 
+<template name="page_map">
     {{> map }}
-</body>
+</template>
+
+<template name="page_charts">
+    {{> charts }}
+</template>
+
 <template name="iniciativas">
     {{#each list}}
         <li>{{ titulo }}</li>
@@ -119,8 +140,10 @@
     </template>
 
     <template name="map">
-        Mapa
         <div id="map_canvas" style="height:500px; width:500px;"></div>
-        Fin Mapa
+    </template>
+
+    <template name="charts">
+    <div id="chart"> </div>
     </template>
 

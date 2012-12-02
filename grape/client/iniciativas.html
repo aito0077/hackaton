@@ -1,0 +1,174 @@
+<!-- Listado de Iniciativas -->
+<template name="ListadoIniciativas">
+  <div class="media">
+    <a class="pull-left" href="#">
+      <img src="{{imagenPrincipal}}" alt="">
+    </a>
+    <div class="media-body">
+      <h2 class="media-heading">{{tituloPrincipal}}</h2>
+      <!-- Nested media object -->
+      <div class="media statsCat">
+        <div class="statsCat">
+          <p>{{count}} <span class="statName">Iniciativas</span></p>
+          <p>33 <span class="statName">Participantes</span></p>
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+  
+  <ul class="thumbnails">
+    {{#each listado}}
+    <li class="span3" href="#">
+      <div>
+        <img src="http://minamistudios.com/hack/images/medioAmbiente01.png" alt="">
+        <h5><a href="#" class="iniciativa" data-id="{{_id}}">{{titulo}}</a></h5>
+        <p>{{descripcion}}</p>
+        <p> <button class="btn btn-success iniciativa" data-id="{{_id}}" type="button">Conocer más</button></p>
+      </div>
+    </li>
+    {{/each}}
+  </ul>
+</template>
+
+<template name="iniciativa">
+
+  {{#with detail }}
+  <ul class="media-list">
+    <li class="media">
+      <a class="pull-left" href="#">
+        <img class="media-object" src="http://placehold.it/64x64">
+      </a>
+      <div class="media-body">
+        <h1 class="media-heading size1">
+          {{titulo}}
+        </h1>
+        <span class="label label-success">Medio Ambiente</span>
+        <span class="label label-info">Educación</span>
+        <span class="label label-warning">Desarrollo</span>
+        <span class="label label-important">Arte y Cultura</span>
+        <!-- Nested media object -->
+        <h2 class="size2">Descripción</h2>
+        <p>{{descripcion}}</p>
+        <h2 class="size2">Estado del Proyecto</h2>
+        <div class="estadoBadge step normal"><span>Convocatoria</span></div>
+        <div class="estadoBadge step current"><span>Desarrollo</span></div>
+        <div class="estadoBadge step next"><span>Conclusión</span></div>
+        <br><br>
+        {{> sesumaron}}
+      </div>
+    </div>
+  </li>
+</ul>
+{{/with}}
+</template>
+
+<template name="sesumaron">
+  <div class="noBigMargin">
+    <h3 class="size3">Se sumaron a este proyecto</h3>
+    <ul class="thumbnails">
+      {{#each participantes}}
+      <li><a href="#" class""><img src="http://placehold.it/100x100" alt=""></a></li>
+      {{/each}}
+    </ul>
+  </div>
+</template>
+
+<template name="sidebarDatos">
+  <div class="span3">
+    {{#if currentUser}}
+    <button class="btn btn-primary participar" type="button">Quiero sumarme a esta causa</button>
+    {{else}}
+    {{loginButtons}}
+    {{/if}}
+  </div>
+  <span class="span3">
+    <h3 class="size3">Datos Relacionados</h3>
+  </span>
+</template>
+
+<template name="iniciativas">
+  {{#each list}}
+  <li>{{ titulo }}</li>
+  {{/each}}
+</template>
+
+<template name="iniciativaForm">
+  <div class="span3">
+    <form class="form-horizontal" id="IniciativaForm">
+      <fieldset>
+        <legend>Enviá tu Iniciativa</legend>
+        <label for="iniTitulo">Titulo</label>
+        <input type="text" id="iniTitulo" placeholder="Titulo">
+
+        <label for="iniCategoria">Categoria</label>
+        <select id="iniCategoria">
+          <option>Medio Ambiente</option>
+          <option>Educacion</option>
+          <option>Arte y Cultura</option>
+          <option>Desarrollo</option>
+        </select>
+
+        <label for="iniTipo">Tipo</label>
+        <select id="iniTipo">
+          <option>Reciclado</option>
+          <option>Ecologia Urbana</option>
+          <option>Espacio Publico</option>
+          <option>Reutilizacion</option>
+          <option>Capacitacion</option>
+          <option>Ayuda Escolar</option>
+          <option>Taller</option>
+          <option>Deporte</option>
+          <option>Prevencion</option>
+          <option>Evento</option>
+          <option>Charla</option>
+          <option>Exposicion</option>
+          <option>Proyecto Autogestivo</option>
+          <option>Economia Solidaria</option>
+          <option>Cooperativa</option>
+          <option>Mercado Comunal</option>
+          <option>Festival</option>
+          <option>Huerta</option>
+        </select>
+        <label for="iniLocacion">Locacion</label>
+        <input type="text" id="iniLocacion" placeholder="Locacion" value="{{ location }}" disabled >
+        <span class="help-block"><small>Por el momento solo buenos aires  :)</small></span>
+        <label for="iniDescripcion">Descripcion</label>
+        <textarea id="iniDescripcion" placeholder="Descripcion" rows="4"></textarea>
+      </fieldset>
+      {{> tareasForm}}
+      <br>
+      <a href="#" class="btn guardarIniciativa">Guardar</a>
+
+    </form>
+  </div>
+</template>
+
+<template name="tareasForm">
+  <legend>Tareas</legend>
+  <ol>
+    {{# each tareas }}
+    <li>{{ nombre }} <span class="badge badge-info">{{categoria}}</span></li>
+    {{/each}}
+  </ol>  
+  <form class="form-inline">
+    <input class="input-small" type="text" id="tareaNombre" placeholder="Tarea">
+    <select id="tareaCategoria" class="input-small">
+      <option>Trabajo Manual</option>
+      <option>Cultivar</option>
+      <option>Reciclar</option>
+      <option>Educar</option>
+      <option>Dictar Taller</option>
+      <option>Ayudar</option>
+      <option>Cuidar</option>
+      <option>Donar</option>
+      <option>Pintar</option>
+      <option>Exponer</option>
+      <option>Actuar</option>
+      <option>Organizar</option>
+      <option>Producir</option>
+    </select>
+    <a class="agregarTarea btn">+</a>
+  </form>
+
+</template>

@@ -1,0 +1,91 @@
+<template name="perfil">
+  <ul class="media-list">
+    <li class="media"><a class="pull-left" href="#"><img class="media-object" src="http://placehold.it/64x64"></a>
+      <div class="media-body">
+        <h1 class="media-heading size1">Alejandro Romero</h1>
+        <p>Buenos Aires, Argentina</p>
+        <span class="label label-success">Medio Ambiente</span> <span class="label label-info">Salud</span> <span class="label label-warning">Educación</span>
+        <!-- Nested media object -->
+        <h2 class="size2">Sobre mí</h2>
+        <p>Soy una persona interesada en aportar mis conocimientos y experiencia con mi comunidad. También, me interesa mucho poder aprender de otras personas, a través de la participación en sus iniciativas... y por qué no? también de las mías..!</p>
+        <br>
+        {{> participoEn}}
+        {{> quieroParticipar}}
+      </template>        
+
+
+      <template name="participoEn">
+        <div class="noBigMargin">
+          <h3>Estoy participando en estas iniciativas</h3>
+          <ul class="thumbnails">
+            <li><a href="#" class="perfilRight"><img src="http://placehold.it/155x100" class="" alt="">
+              <p><a href="#">Un Barrio</a></p>
+            </a></li>
+            <li><a href="#" class="perfilRight"><img src="http://placehold.it/155x100" class="" alt="">
+              <p>Enseñanza</p>
+            </a></li>
+            <li><a href="#" class="perfilRight"><img src="http://placehold.it/155x100" class="" alt="">
+              <p>Moderador</p>
+            </a></li>
+          </ul>
+        </div>
+      </template>
+
+      <template name="quieroParticipar">
+        <div class="noBigMargin">
+          <h3 class="size3">Quiero participar en estas casusas</h3>
+          <ul class="thumbnails">
+            <li><a href="#" class="perfilRight"><img src="http://placehold.it/155x100" class="" alt="">
+              <p>Un Barrio</p>
+            </a></li>
+            <li><a href="#" class="perfilRight"><img src="http://placehold.it/155x100" class="" alt="">
+              <p>Enseñanza</p>
+            </a></li>
+            <li><a href="#" class="perfilRight"><img src="http://placehold.it/155x100" class="" alt="">
+              <p>Moderador</p>
+            </a></li>
+          </ul>
+        </div>
+      </template>  
+
+      <template name="sidebarPerfil">
+        <div class="sidebar">
+          {{> logros}}
+          {{> intereses}}
+        </div>
+      </template>
+
+      <template name="logros">
+        <div class="noBigMargin">
+          <h3 class="size3">Mis logros</h3>
+          <ul class="thumbnails">
+            <li><img src="http://minamistudios.com/hack/images/comunicador.jpg" class="" alt="">
+              <p>Promotor</p>
+            </li>
+            <li><img src="http://minamistudios.com/hack/images/escritor.jpg" class="" alt="">
+              <p>Redactor</p>
+            </li>
+            <li><img src="http://minamistudios.com/hack/images/moderador.jpg" class="" alt="">
+              <p>Moderador</p>
+            </li>
+          </ul>
+        </div>
+      </template>
+
+      <template name="intereses">
+        <div class="noBigMargin">
+          <h3>Interesado en compartir</h3>
+          <ul class="thumbnails">
+            <li><img src="http://minamistudios.com/hack/images/tiempo.jpg" class="" alt="">
+              <p>Tiempo</p>
+            </li>
+            <li><img src="http://minamistudios.com/hack/images/materiales.jpg" class="" alt="">
+              <p>Materiales</p>
+            </li>
+            <li><img src="http://minamistudios.com/hack/images/trabajo.jpg" class="" alt="">
+              <p>Trabajo</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </template>

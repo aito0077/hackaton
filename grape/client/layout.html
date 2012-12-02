@@ -1,0 +1,46 @@
+<template name="layout">
+    {{#if home}}
+    <!--Llamamos a la página de Inicio-->
+    <div class="row">
+      <div class="span12">
+       {{> info}}
+       {{> inicio}}
+     </div>
+   </div>
+   {{/if}}
+
+   {{#if descripcion_iniciativa}}
+   <!--Llamamos a la página de Inicio-->
+   <div class="row">
+    <div class="span8">
+      {{> info}}
+      {{> iniciativa}}
+    </div>
+    <div class="span3"> 
+      {{> sidebarDatos}}
+    </div>
+  </div>
+  {{/if }}
+  
+  {{#if perfil}}
+  <!--Definimos la página de Perfil-->
+  <div class="row">
+    <div class="span8">
+      {{> info}}
+      {{> perfil}}
+    </div>
+    <div class="span3 "> 
+      {{> sidebarPerfil}}
+    </div>
+  </div>
+  {{/if}}
+  <!-- -->
+  {{#if iniciativas }}
+  <!-- Listado de Iniciativas -->
+  <div class="row">
+   <div class="span12">
+    {{> info}}
+    {{> ListadoIniciativas}}
+  </div>
+  {{/if}}
+</template>
