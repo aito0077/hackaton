@@ -11,7 +11,7 @@
         console.log('map rendered');
 
        //find_pais_indicador('ARG', 'NY.ADJ.NNTY.KD');
-       //initialize();
+       initialize();
        //google.maps.event.addDomListener(window, 'load', initialize);
     };
 
@@ -40,6 +40,8 @@
                 my_mark = new google.maps.Marker({ map: map });
             }
             my_mark.setPosition(e.latLng);
+            Session.set('latLng',e.latLng);
+            console.log(e.latLng);
         });
 
         _.each(results, function(model) {
