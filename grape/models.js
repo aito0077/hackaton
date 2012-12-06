@@ -1,5 +1,8 @@
 var Iniciativas = new Meteor.Collection("Iniciativas");
 var Participantes = new Meteor.Collection("Participantes");
+var indicadores = new Meteor.Collection('indicadores'), 
+    countries = new Meteor.Collection('countries'),
+    indicadores_latin_america = new Meteor.Collection('indicadores_latin_america');
 
 Iniciativas.allow({
 	insert: function (userId, doc) {
@@ -49,5 +52,21 @@ Meteor.methods({
 	    options.creador = Meteor.userId();
 	    options.fecha_creacion = Date.now();
    		return Iniciativas.insert(options);
-   	}
+   	},
+
+    find_pais_indicador: function(paises, cod_indicador) {
+        console.dir(paises);
+        console.log(cod_indicador);
+        var data_pais_indicador = indicadores_latin_america.find({
+            'Country Code': {'$in': paises},    
+            'Indicator Code': cod_indicador    
+        });
+        var data = {};
+        data_pais_indicador.forEach(function (indicador) {
+            data[indicador['Country Code']] = indicador;
+        });
+        return data;
+    }
+
+
 });
