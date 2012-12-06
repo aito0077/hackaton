@@ -18,13 +18,7 @@
                 }
             });
         }
-       //render_chart();
     }
-
-    function fetch_data_pais_indicador() {
-        console.dir(data_pais_indicador.find().fetch());
-    }
-
 
     function render_chart() {
         var collection = Session.get('paises_indicadores');
@@ -56,40 +50,43 @@
                 ]); 
             });
             var serie = {
-                //type: 'line',
-                name: country['Country Name'],
-                //pointInterval: 24 * 3600 * 1000 * 365,
-                //pointStart: Date.UTC(2000, 0, 01),
-                data: country_data
-            }
+                    name: country['Country Name'],
+                    id: country['Country Code'],
+                    data: country_data
+                };
             series.push(serie);
-        });
+       });
 
         var options = {
             indicator_description: descripcion_indicador,
-            element_tag: 'chart_div',
+            element_tag: 'charts_indicador_iniciativas',
             x_title: '',
             y_title: '',
         };
 
-        console.dir(series);
+        Session.set('current_categoria', 'Medio Ambiente');
+
+        posicionar_iniciativas(series);
 
         render_line_chart(series, options);
+
     }
 
-    function render_line_chart(data, options) {
-        chart = new Highcharts.Chart({
+    var grafico;
+
+     function render_line_chart(data, options) {
+        grafico = new Highcharts.StockChart({
             chart: {
                 type: 'spline',
                 renderTo: options.element_tag,
                 zoomType: 'x',
                 spacingRight: 20
             },
+            rangeSelector: {
+                selected: 1
+            },
             title: {
                 text: options.indicator_description || ''
-            },
-            subtitle: {
-                text: ''
             },
             xAxis: {
                 type: 'datetime',
@@ -102,47 +99,76 @@
                 title: {
                     text: options.y_title
                 },
-                min: 0.6,
+                gridLineColor: '#FFFFFF',
+                min: 0,
                 startOnTick: false,
                 showFirstLabel: false
             },
-            tooltip: {
-                shared: true
-            },
-            legend: {
-                enabled: false
-            },
-            plotOptions: {
-                area: {
-                    fillColor: {
-                        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1},
-                        stops: [
-                            [0, Highcharts.getOptions().colors[0]],
-                            [1, 'rgba(2,0,0,0)']
-                        ]
-                    },
-                    lineWidth: 1,
-                    marker: {
-                        enabled: false,
-                        states: {
-                            hover: {
-                                enabled: true,
-                                radius: 5
-                            }
-                        }
-                    },
-                    shadow: true,
-                    states: {
-                        hover: {
-                            lineWidth: 1
-                        }
-                    }
-                }
-            },
-    
             series: data
         });
     }
+
+    var iniciativas = [
+        {
+            year: 2008, 
+            month: 6,
+            day: 23,
+            pais: 'BRA',
+        },
+        {
+            year: 2009, 
+            month: 3,
+            day: 15,
+            pais: 'BOL'
+        },
+        {
+            year: 2009, 
+            month: 11,
+            day: 15,
+            pais: 'ARG'
+        }
+    ];
+
+
+
+    function posicionar_iniciativas(series) {
+        var self = this;
+
+        var icon_image = 'medioAmbiente.png';
+        switch(this.Session.get('current_categoria')) {
+            case "Medio Ambiente":
+                icon_image = 'medioAmbiente.png';
+                break; 
+            case "Educacion":
+                icon_image = 'educacion.png';
+                break; 
+            case "Desarrollo":
+                icon_image = 'desarrolloSocial.png';
+                break; 
+            case "Arte y Cultura":
+                icon_image = 'arteCultura.png';
+                break; 
+            default: 
+                icon_image = 'medioAmbiente.png';
+                break; 
+        }
+        var shape = 'url(/images/'+icon_image+')';
+        console.log(shape);
+        _.each(iniciativas, function(iniciativa) {
+            var marca_iniciativa = {
+                    type : 'flags',
+                    data : [{
+                        x : Date.UTC(iniciativa.year, iniciativa.month, iniciativa.day),
+                        text : iniciativa.texto || ' ... '
+                    }],
+                    onSeries : iniciativa.pais,
+                    shape: shape,
+                    width : 16
+            };
+            series.push(marca_iniciativa);
+        });
+    }
+
 
     function _render_chart() {
         var collection = Session.get('paises_indicadores');
