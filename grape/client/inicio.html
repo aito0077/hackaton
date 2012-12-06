@@ -56,10 +56,12 @@
 			</ul>
 		</div>
 		<br><br>
-		{{> mapa}}
+        {{> mapa}}
 		{{> iniciativaForm}}
 	</div>
-	<div class="span12"><img src="http://minamistudios.com/hack/images/mapita.png"></div>
+	<div class="span12">
+        {{> charts}}
+    </div>
 </template>
 
 
@@ -67,6 +69,13 @@
 	<div id="map_canvas" class="span7 map">
 	</div>
 </template>
+
+
+<template name="charts">
+	<div id="charts_indicador_iniciativas">
+	</div>
+</template>
+
 
 <template name="ultimasIniciativas">
 	<div class="span3">

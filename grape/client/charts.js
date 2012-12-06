@@ -82,8 +82,18 @@
                 zoomType: 'x',
                 spacingRight: 20
             },
+            legend: {
+                enabled: true,
+                align: '',
+                backgroundColor: '#FFFFFF',
+                borderColor: 'white',
+                borderWidth: 0,
+                layout: 'horizontal',
+                verticalAlign: 'top',
+                shadow: true
+            },
             rangeSelector: {
-                selected: 1
+                enabled: false
             },
             title: {
                 text: options.indicator_description || ''
@@ -104,7 +114,16 @@
                 startOnTick: false,
                 showFirstLabel: false
             },
-            series: data
+            tooltip: {
+                enabled: false
+            },
+            series: data,
+            navigation: {
+                buttonOptions: {
+                    enabled: false
+                }
+            },
+
         });
     }
 
@@ -130,6 +149,21 @@
     ];
 
 
+    function click_iniciativa_chart(evento) {
+        console.log('click');
+        console.dir(evento);
+    }
+
+    function mouseout_iniciativa_chart(evento) {
+        console.log('out');
+        console.dir(evento);
+    }
+
+
+    function mouseover_iniciativa_chart(evento) {
+        console.log('over');
+        console.dir(evento);
+    }
 
     function posicionar_iniciativas(series) {
         var self = this;
@@ -153,7 +187,6 @@
                 break; 
         }
         var shape = 'url(/images/'+icon_image+')';
-        console.log(shape);
         _.each(iniciativas, function(iniciativa) {
             var marca_iniciativa = {
                     type : 'flags',
@@ -163,7 +196,16 @@
                     }],
                     onSeries : iniciativa.pais,
                     shape: shape,
-                    width : 16
+                    showInLegend: false,
+                    width : 16,
+                    events: {
+                        click: click_iniciativa_chart
+                        //mouseOver: mouseover_iniciativa_chart, 
+                        //mouseOut: mouseout_iniciativa_chart
+                    },
+                    cursor: 'hand',
+                    title: '',
+                    pointPlacement: 'on'
             };
             series.push(marca_iniciativa);
         });
