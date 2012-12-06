@@ -1,30 +1,35 @@
     var map, 
-        my_mark,
-        my_latitude = -15.792254, 
-        my_longitude = -58.20996;
-        posisionate_in_my_location = true
-        zoom_my_location = 13;
+    my_mark,
+    my_latitude = -15.792254, 
+    my_longitude = -58.20996;
+    posisionate_in_my_location = true
+    zoom_my_location = 13;
 
 
 
     Template.mapa.rendered = function(){
-        console.log('map rendered');
 
+       console.log('map rendered');
        //find_pais_indicador('ARG', 'NY.ADJ.NNTY.KD');
-       initialize();
+       var ret = Iniciativas.find().fetch();
+       initialize(ret);
        //google.maps.event.addDomListener(window, 'load', initialize);
-    };
+   };
 
 
     //Google maps
-    function initialize() {
+    function initialize(options) {
 
-        var results = [
-            {lat: -34.584111, long:-58.427194},
-            {lat: -34.574642, long:-58.441264},
-            {lat: -34.573333, long:-58.441564},
-            {lat: -34.574444, long:-58.444564}
-        ];
+        var results = [];
+        _.each(options,function(iniciativa){
+            if (typeof iniciativa.lat === 'undefined'){
+            }else{
+                results.push({
+                    doc:iniciativa
+                });
+            }
+        })
+        
         
         var latlng = new google.maps.LatLng(my_latitude, my_longitude);
         var myOptions = {
@@ -41,14 +46,35 @@
             }
             my_mark.setPosition(e.latLng);
             Session.set('latLng',e.latLng);
-            console.log(e.latLng);
         });
 
+        var markerTemplate = _.template([
+            '<div class="media">',
+                '<a class="pull-left" href="#">',
+                    '<img class="media-object" src="http://minamistudios.com/hack/images/persona1.png">',
+                '</a>',
+                '<div class="media-body">',
+                    '<h3><a class="iniciativa" data-id="<%= _id %>" href="#"><%= titulo %></a></h3>',
+                    '<div class="media">',
+                        '<p class="descSmall"><%= descripcion %></p>',
+                        '<span><img src="http://minamistudios.com/hack/images/praise.png"> <span class="small2">123 </span>',
+                    '</span></div>',
+                '</div>',
+            '</div>'].join(''));
+
         _.each(results, function(model) {
-            var latlng_mark = new google.maps.LatLng(model.lat,model.long);
+            console.log(model.doc.titulo);
+            var latlng_mark = new google.maps.LatLng(model.doc.lat,model.doc.lon);
             var marker = new google.maps.Marker({
+                title:model.titulo,
                 position: latlng_mark,
                 map: map
+            });
+            marker.info = new google.maps.InfoWindow({
+                content:markerTemplate(model.doc)
+            })
+            google.maps.event.addListener(marker, 'click', function(){
+                marker.info.open(map, marker);
             });
         });
 
@@ -62,19 +88,11 @@
             navigator.geolocation.getCurrentPosition(function(position) {
                 my_latitude = position.coords.latitude;
                 my_longitude = position.coords.longitude;
-                console.log('Mi latitude: '+my_latitude+' - longitud: '+my_longitude);
                 var pos = new google.maps.LatLng(my_latitude, my_longitude);
                 map.setCenter(pos);
                 map.setZoom(zoom_my_location);
-                /*
-                var infowindow = new google.maps.InfoWindow({
-                    map: map,
-                    position: pos,
-                    content: 'Estoy aqui.'
-                });
-                */
             }, function() {
-            handleNoGeolocation(true);
+                handleNoGeolocation(true);
             });
         } else {
             handleNoGeolocation(false);

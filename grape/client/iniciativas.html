@@ -32,28 +32,28 @@
 </template>
 
 <template name="iniciativa">
-
   {{#with detail }}
   <ul class="media-list">
     <li class="media">
-      <a class="pull-left" href="#">
-        <img class="media-object" src="http://placehold.it/64x64">
+      <a class="pull-left ver-perfil" data-perfil="{{ creador._id}}" href="#{{ creador._id}}">
+        <img class="media-object profile-picture" src="http://placehold.it/64x64" data-profile="{{creador}}">
       </a>
       <div class="media-body">
-        <h1 class="media-heading size1">
-          {{titulo}}
-        </h1>
+        <h1 class="media-heading size1">{{titulo}}</h1>
         <span class="label label-success">Medio Ambiente</span>
         <span class="label label-info">Educación</span>
         <span class="label label-warning">Desarrollo</span>
         <span class="label label-important">Arte y Cultura</span>
         <!-- Nested media object -->
-        <h2 class="size2">Descripción</h2>
+        <h2 class="size2">Descripci&oacute;n</h2>
         <p>{{descripcion}}</p>
         <h2 class="size2">Estado del Proyecto</h2>
         <div class="estadoBadge step normal"><span>Convocatoria</span></div>
         <div class="estadoBadge step current"><span>Desarrollo</span></div>
         <div class="estadoBadge step next"><span>Conclusión</span></div>
+        {{#if soyCreador }}
+          soy el creador!
+        {{/if}}
         <br><br>
         {{> sesumaron}}
       </div>
@@ -68,7 +68,7 @@
     <h3 class="size3">Se sumaron a este proyecto</h3>
     <ul class="thumbnails">
       {{#each participantes}}
-      <li><a href="#" class""><img src="http://placehold.it/100x100" alt=""></a></li>
+      <li><a href="#" data-perfil="{{_id}}" class="ver-perfil"><img src="http://placehold.it/100x100" alt=""></a></li>
       {{/each}}
     </ul>
   </div>
@@ -90,14 +90,8 @@
 
 </template>
 
-<template name="iniciativas">
-  {{#each list}}
-  <li>{{ titulo }}</li>
-  {{/each}}
-</template>
-
 <template name="iniciativaForm">
-  <div class="span3">
+  <div class="span4 center">
     <form class="form-horizontal" id="IniciativaForm">
       <fieldset>
         <legend>Enviá tu Iniciativa</legend>
@@ -139,7 +133,7 @@
         <label for="iniDescripcion">Descripcion</label>
         <textarea id="iniDescripcion" placeholder="Descripcion" rows="4"></textarea>
       </fieldset>
-      {{> tareasForm}}
+      {{> tareasForm }}
       <br>
       <a href="#" class="btn guardarIniciativa">Guardar</a>
 

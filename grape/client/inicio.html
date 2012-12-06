@@ -56,12 +56,16 @@
 			</ul>
 		</div>
 		<br><br>
-        {{> mapa}}
+		{{> mapa}}
 		{{> iniciativaForm}}
 	</div>
-	<div class="span12">
-        {{> charts}}
+    <div class="span12">
+            {{> charts}}
     </div>
+
+    <!--
+	<div class="span12"><img src="http://minamistudios.com/hack/images/mapita.png"></div>
+    -->
 </template>
 
 
@@ -69,13 +73,6 @@
 	<div id="map_canvas" class="span7 map">
 	</div>
 </template>
-
-
-<template name="charts">
-	<div id="charts_indicador_iniciativas">
-	</div>
-</template>
-
 
 <template name="ultimasIniciativas">
 	<div class="span3">
@@ -91,7 +88,7 @@
 <template name="ItemListadoInicio">
 	<li class="media">
 		<a class="pull-left" href="#">
-			<img class="media-object" src="http://minamistudios.com/hack/images/persona1.png">
+			<img class="media-object ver-perfil" data-perfil={{ creador }} src="http://minamistudios.com/hack/images/persona1.png">
 		</a>
 		<div class="media-body">
 			<h3><a class="iniciativa" data-id="{{_id}}" href="#">{{titulo}}</a></h3>
@@ -101,4 +98,9 @@
 			</div>
 		</div>
 	</li>      	
+</template>
+
+<template name="charts">
+       <div id="charts_indicador_iniciativas">
+       </div>
 </template>

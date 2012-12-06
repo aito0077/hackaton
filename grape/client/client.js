@@ -54,6 +54,13 @@ Template.ListadoIniciativas.imagenPrincipal = function(){
   return Session.get('imagen-principal');
 }
 
+Template.ItemListadoInicio.events({
+    'click .iniciativa': function(event){
+        Session.set('page','descripcion_iniciativa');
+        Session.set('iniciativa',$(event.currentTarget).attr('data-id'));
+    }
+});
+
 Template.ListadoIniciativas.events({
   'click .iniciativa': function(event){
     Session.set('page','descripcion_iniciativa');
@@ -67,24 +74,15 @@ Template.ListadoIniciativas.events({
  * Formulario Iniciativa
  */
 
- Template.iniciativaForm.location = function(){
+Template.iniciativaForm.location = function(){
   return Session.get("location");
 };
-
-/**
- * Iniciativas
- */
-
- Template.iniciativas.list = function(){
-  return Iniciativas.find();
-}
-
 
 /**
  * Layout
  */
 
- Template.layout.home = function(){
+Template.layout.home = function(){
   return Session.equals('page','home');
 }
 
@@ -105,71 +103,19 @@ Template.layout.perfil = function(){
  */
 
 
+/**
+ * filepicker
+ */
+
 /*
  * Ultimos por categoria
  */
 
- Template.inicio.UltimosPorCategoria = function(categoria, limite){
-  console.log(categoria);
+Template.inicio.UltimosPorCategoria = function(categoria, limite){
   var ret = Iniciativas.find({categoria:categoria},{sort:{fecha_creacion:-1}});
   var items = ret.fetch().slice(0,3);
   return Template.ultimasIniciativas({listado:items,count:ret.count()});
 }
-
-
-Template.medioAmbienteInicio.count = function(){
-  return Iniciativas.find({categoria:"Medio Ambiente"}).count();
-}
-Template.medioAmbienteInicio.listado = function(){
-  return Iniciativas.find({categoria:"Medio Ambiente"});
-}
-
-Template.medioAmbienteInicio.events({
-  'click .iniciativa': function(event){
-    Session.set('page','descripcion_iniciativa');
-    Session.set('iniciativa',$(event.currentTarget).attr('data-id'));
-  }
-})
-
-Template.educacionInicio.count = function(){
-  return Iniciativas.find({categoria:"Educacion"}).count();
-}
-Template.educacionInicio.listado = function(){
-  return Iniciativas.find({categoria:"Educacion"});
-}
-Template.educacionInicio.events({
-  'click .iniciativa': function(event){
-    Session.set('page','descripcion_iniciativa');
-    Session.set('iniciativa',$(event.currentTarget).attr('data-id'));
-  }
-})
-
-
-Template.desarrolloInicio.count = function(){
-  return Iniciativas.find({categoria:"Desarrollo"}).count();
-}
-Template.desarrolloInicio.listado = function(){
-  return Iniciativas.find({categoria:"Desarrollo"});
-}
-Template.desarrolloInicio.events({
-  'click .iniciativa': function(event){
-    Session.set('page','descripcion_iniciativa');
-    Session.set('iniciativa',$(event.currentTarget).attr('data-id'));
-  }
-})
-
-Template.arteCulturaInicio.count = function(){
-  return Iniciativas.find({categoria:"Arte y Cultura"}).count();
-}
-Template.arteCulturaInicio.listado = function(){
-  return Iniciativas.find({categoria:"Arte y Cultura"});
-}
-Template.arteCulturaInicio.events({
-  'click .iniciativa': function(event){
-    Session.set('page','descripcion_iniciativa');
-    Session.set('iniciativa',$(event.currentTarget).attr('data-id'));
-  }
-})
 
 Template.info.mostrarMensaje = function(){
   return Session.get('mostrarMensaje');
@@ -187,9 +133,41 @@ Template.sesumaron.participantes = function(){
   return Participantes.find({iniciativa:Session.get('iniciativa')});
 }
 
+Template.iniciativa.soyCreador = function () {
+  var creador = Meteor.users.findOne(this.creador);
+  return creador._id == Meteor.userId();
+};
+
 Template.iniciativa.detail = function () {
   return Iniciativas.findOne(Session.get("iniciativa"));
 };
+
+Template.iniciativa.events({
+  'click .ver-perfil':function(event){
+    Session.set('page','perfil');
+    Session.set('perfil',$(event.currentTarget).attr('data-perfil'));
+    console.log($(event.currentTarget).attr('data-perfil'));
+
+  }
+});
+
+Template.sesumaron.events({
+  'click .ver-perfil':function(event){
+    Session.set('page','perfil');
+    Session.set('perfil',$(event.currentTarget).attr('data-perfil'));
+    console.log($(event.currentTarget).attr('data-perfil'));
+
+  }
+});
+
+Template.ItemListadoInicio.events({
+  'click .ver-perfil':function(event){
+    Session.set('page','perfil');
+    Session.set('perfil',$(event.currentTarget).attr('data-perfil'));
+    console.log($(event.currentTarget).attr('data-perfil'));
+
+  }
+});
 
 Template.sidebarDatos.events({
   'click .participar': function(){
@@ -231,7 +209,8 @@ Template.iniciativaForm.events({
       mostrarMensaje('Debes ingresar al sitio para participar :)', 'error');
       return;
     }
-    var latlon = Session.get('latLng') | false;
+    var latlon = Session.get('latLng');
+    console.log(latlon);
     var Iniciativa = {
       titulo:$('#iniTitulo').val(),
       descripcion:$('#iniDescripcion').val(),
@@ -241,7 +220,7 @@ Template.iniciativaForm.events({
       tareas:Session.get('tareas')
     };
 
-    if( latlon !== false ){
+    if( typeof latlon !== "undefined" ){
       Iniciativa.lat = latlon.$a;
       Iniciativa.lon = latlon.ab;
     }
@@ -251,7 +230,7 @@ Template.iniciativaForm.events({
 
     Session.set('latLng',undefined);
     latlon = undefined ;
-    Session.set('tareas',null); 
+    Session.set('tareas',[]); 
     tareas = undefined;
   }
 });
