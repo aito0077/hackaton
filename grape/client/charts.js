@@ -1,15 +1,22 @@
     //Charts
 
+
+
     Template.charts.rendered = function(){
         console.log('chart rendered');
         if (Meteor.is_client) {
-            Meteor.call('find_pais_indicador', ['ARG', 'BOL', 'BRA'], 'NY.ADJ.DMIN.GN.ZS', function(err,response) {
+
+            //Meteor.call('find_pais_indicador', ['ARG', 'BOL', 'BRA'], 'NY.ADJ.DMIN.GN.ZS', function(err,response) {
+            //Meteor.call('find_pais_indicador', ['ARG', 'BOL', 'BRA'], 'Reciclado', function(err,response) {
+            Meteor.call('find_pais_indicador', [], 'Mercado Comunal', function(err,response) {
                 if(err) {
                     Session.set('serverDataResponse', "Error:" + err.reason);
                     return;
                 }
-                console.log('volvio con exito');
-                Session.set('paises_indicadores', response);
+                Session.set('paises_indicadores', response.data);
+                Session.set('tipo_indicador', response.tipo_indicador);
+                Session.set('iniciativas', response.iniciativas);
+                console.dir(response.tipo_indicador);
 
                 try {
                         render_chart();
@@ -22,10 +29,14 @@
 
     function render_chart() {
         var collection = Session.get('paises_indicadores');
+        var tipo_indicador = Session.get('tipo_indicador');
+        var iniciativas = Session.get('iniciativas');
+        console.dir(iniciativas);
 
         var paises_code = _.keys(collection);
         var first_element = collection[_.first(paises_code)];
-        var descripcion_indicador = first_element['Indicator Name'];
+        //var descripcion_indicador = first_element['Indicator Name'];
+        var descripcion_indicador = tipo_indicador.descripcion;
         var keys = _.keys(first_element);
         var periodos = [];
         _.each(keys, function(periodo) {
@@ -38,9 +49,16 @@
 
         var series = [];
         _.each(collection, function(country) {
-            var country_data = [];
+            var country_data = [],
+                value = 0,
+                old_value = 0;
             _.each(periodos, function(periodo) {
-                var value = country[periodo] || 0;
+                if(periodo > 2010) {
+                    old_value = value;
+                    value = country[periodo] || old_value;
+                } else {
+                    value = country[periodo] || 0;
+                }
                 try {
                     value = parseFloat(value);
                 } catch(e) {console.log(e);}
@@ -49,6 +67,10 @@
                     value||0
                 ]); 
             });
+            country_data.push([
+                Date.UTC(2013, 0, 1),
+                old_value
+            ]); 
             var serie = {
                     name: country['Country Name'],
                     id: country['Country Code'],
@@ -59,14 +81,15 @@
 
         var options = {
             indicator_description: descripcion_indicador,
+            categoria: tipo_indicador.categoria,
             element_tag: 'charts_indicador_iniciativas',
             x_title: '',
             y_title: '',
         };
 
-        Session.set('current_categoria', 'Medio Ambiente');
+        Session.set('current_categoria', tipo_indicador.categoria);
 
-        posicionar_iniciativas(series);
+        posicionar_iniciativas(series, iniciativas);
 
         render_line_chart(series, options);
 
@@ -89,7 +112,7 @@
                 borderColor: 'white',
                 borderWidth: 0,
                 layout: 'horizontal',
-                verticalAlign: 'top',
+                verticalAlign: 'bottom',
                 shadow: true
             },
             rangeSelector: {
@@ -97,6 +120,10 @@
             },
             title: {
                 text: options.indicator_description || ''
+            },
+
+            subtitle: {
+                text: options.categoria || ''
             },
             xAxis: {
                 type: 'datetime',
@@ -127,6 +154,7 @@
         });
     }
 
+    /*
     var iniciativas = [
         {
             year: 2008, 
@@ -148,6 +176,7 @@
         }
     ];
 
+    */
 
     function click_iniciativa_chart(evento) {
         console.log('click');
@@ -165,7 +194,7 @@
         console.dir(evento);
     }
 
-    function posicionar_iniciativas(series) {
+    function posicionar_iniciativas(series, iniciativas) {
         var self = this;
 
         var icon_image = 'medioAmbiente.png';
@@ -191,8 +220,9 @@
             var marca_iniciativa = {
                     type : 'flags',
                     data : [{
-                        x : Date.UTC(iniciativa.year, iniciativa.month, iniciativa.day),
-                        text : iniciativa.texto || ' ... '
+                        //x : Date.UTC(iniciativa.year, iniciativa.month, iniciativa.day),
+                        x : iniciativa.fecha_creacion,
+                        text : iniciativa.titulo 
                     }],
                     onSeries : iniciativa.pais,
                     shape: shape,
@@ -212,99 +242,3 @@
     }
 
 
-    function _render_chart() {
-        var collection = Session.get('paises_indicadores');
-        Session.set('paises_indicadores', null);
-        console.log('google chart');
-
-
-        var paises_code = _.keys(collection);
-        var paises_name = [];
-        _.each(paises_code, function(p_c) {
-            paises_name.push(collection[p_c]['Country Name']);
-        });
-
-        var first_element = collection[_.first(paises_code)];
-        var descripcion_indicador = first_element['Indicator Name'];
-        var keys = _.keys(first_element);
-        var periodos = [];
-        _.each(keys, function(periodo) {
-            periodos.push(periodo.toString());
-        });
-        var records = [];
-        _.each(periodos, function(periodo) {
-            if(!_.contains([ '_id', 'Country Name', 'Country Code', 'Indicator Name', 'Indicator Code'], periodo)) { 
-                var kk = periodo.toString();
-                var record = [];
-                    record.push(kk);
-                    _.each(paises_code, function(pais) {
-                        var value = collection[pais][kk] || 0;
-                        try {
-                            value = parseFloat(value);
-                        } catch(e) {console.log(e);}
-                        record.push(value||0); 
-                    });
-                records.push(record);
-            }
-
-        });
-
-        var header = _.union(['Periodo'], paises_name);
-        
-        var pre_data = _.union([header], records);
-        var data;
-            data  = google.visualization.arrayToDataTable(pre_data);
-
-            var options = {
-                title: descripcion_indicador
-            };
-
-            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-            chart.draw(data, options);
-
-    }
-
- 
-
-
-/*
-
-    var map_indicadores_tareas = {
-        Medio Ambiente,Reciclado,Emisiones CO2 per capita,EN.ATM.CO2E.PC
-        Medio Ambiente,Huertas,Metano procedente de la actividad agricola,EN.ATM.METH.AG.ZS
-        Medio Ambiente,urbana,Problación Urbana porcentaje del total,SP.URB.TOTL.IN.ZS
-        Medio Ambiente,transporte,Consumo de gasolina del sector vial per cápita,IS.VEH.PCAR.P3
-        Educación,capacitacion,Desempleo,SL.UEM.TOTL.ZS
-        Educación,ayuda escolar,Proporción alumnos-maestro nivel primario,SE.PRM.ENRL.TC.ZS
-        Educación,Taller,,
-        Desarrollo social,Proyecto autogestivos,Tasa de población activa en mujeres,SL.TLF.CACT.FE.ZS
-        Desarrollo social,Economia solidaria,Participación en el ingreso del 20% peor remunerado de la población,SI.DST.FRST.20
-        Desarrollo social,Cooperativas,Desempleo Varones,SL.UEM.TOTL.MA.ZS
-        Desarrollo social,Mercados comunales,indice de producción de alimentos,AG.PRD.FOOD.XD
-
-        Arte y Cultura,Evento,Cantidad de eventos en esta ciudad,/dataset/agenda-cultural
-        Arte y Cultura,Exposiciones,Espacios disponibles para exposiciones,http://data.buenosaires.gob.ar/dataset/organizadores-de-exposiciones
-        Arte y Cultura,Charlas,Red de bibliotecas públicas,http://data.buenosaires.gob.ar/dataset/catalogo-centralizado-red-bibliotecas-publicas
-
-    };
-
-          Reciclado EN.ATM.CO2E.PC
-          Ecologia Urbana SP.URB.TOTL.IN.ZS IS.VEH.PCAR.P3
-          Espacio Publico IS.VEH.PCAR.P3
-          Reutilizacion EN.ATM.CO2E.PC
-          Capacitacion SL.UEM.TOTL.ZS
-          Ayuda Escolar SE.PRM.ENRL.TC.ZS
-          Taller
-          Deporte
-          Prevencion
-          Evento AG.PRD.FOOD.XD 
-          Charla
-          Exposicion
-          Proyecto Autogestivo
-          Economia Solidaria SI.DST.FRST.20
-          Cooperativa
-          Mercado Comunal
-          Festival
-          Huerta EN.ATM.METH.AG.ZS
- 
- */

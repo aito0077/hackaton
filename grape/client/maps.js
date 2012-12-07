@@ -10,10 +10,9 @@
     Template.mapa.rendered = function(){
 
        console.log('map rendered');
-       //find_pais_indicador('ARG', 'NY.ADJ.NNTY.KD');
        var ret = Iniciativas.find().fetch();
        initialize(ret);
-       //google.maps.event.addDomListener(window, 'load', initialize);
+
    };
 
 
@@ -78,20 +77,28 @@
             });
         });
 
-        if(posisionate_in_my_location) {
-            detect_my_location(); 
-        }
+        
     }
 
+    if(posisionate_in_my_location) {
+        detect_my_location(); 
+    }
     function detect_my_location() {
         if(navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
                 my_latitude = position.coords.latitude;
                 my_longitude = position.coords.longitude;
+                Meteor.call('obtener_pais_desde_localizacion', my_latitude, my_longitude, function(err, result) {
+                    Session.set("posicion_pais", result.pais);
+                    Session.set("posicion_provincia", result.provincia);
+                    Session.set("posicion_localidad", result.localidad);
+                });
+
                 var pos = new google.maps.LatLng(my_latitude, my_longitude);
                 map.setCenter(pos);
                 map.setZoom(zoom_my_location);
             }, function() {
+                console.log('problema de geolocalizacion');
                 handleNoGeolocation(true);
             });
         } else {
@@ -115,4 +122,5 @@
         var infowindow = new google.maps.InfoWindow(options);
         map.setCenter(options.position);
     }
+
 
