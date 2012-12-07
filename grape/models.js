@@ -74,7 +74,7 @@ Meteor.methods({
 
         var tipo_indicador = find_indicador_por_tipo(tipo);
         var iniciativas_paises_tipo = Iniciativas.find({
-            'pais': 'ARG',
+            'pais': {'$in': paises},    
             'tipo': tipo
         });
         var iniciativas_data = [];

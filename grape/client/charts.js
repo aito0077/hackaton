@@ -100,6 +100,30 @@
     var grafico;
 
      function render_line_chart(data, options) {
+        var self = this;
+
+        var icon_image = 'medioAmbiente.png';
+        switch(this.Session.get('current_categoria')) {
+            case "Medio Ambiente":
+                icon_image = 'medioAmbiente.png';
+                break; 
+            case "Educacion":
+                icon_image = 'educacion.png';
+                break; 
+            case "Desarrollo":
+                icon_image = 'desarrolloSocial.png';
+                break; 
+            case "Arte y Cultura":
+                icon_image = 'arteCultura.png';
+                break; 
+            default: 
+                icon_image = 'medioAmbiente.png';
+                break; 
+        }
+        var shape = 'url(/images/'+icon_image+')';
+ 
+
+
         grafico = new Highcharts.StockChart({
             chart: {
                 type: 'spline',
@@ -146,19 +170,42 @@
                 showFirstLabel: false
             },
 
-            tooltip: {
-                enabled: false
-            },
             series: data,
             navigation: {
                 buttonOptions: {
                     enabled: false
                 }
             },
+            tooltip: {
+                enabled: true,
+                useHTML: true,
+                formatter: function(){
+                    return this.serie.name;
+                    /*
+                    if(this.series.name == 'iniciativas') {
+                        return '<image href="'+shape+'"></image>';
+                    }
+                    else {
+                        return "";
+                    }
+                    */
+                }                
+            },
             plotOptions: {
+                spline: {
+                    tooltip: {
+                        enabled: false
+                    }
+                },
+                line: {
+                    tooltip: {
+                        enabled: false
+                    }
+                },
                 flags: {
                     tooltip: {
                         enabled: true,
+                        useHTML: true,
                         formatter: function() {
                             return '<image href="'+shape+'"></image>';
                         }
@@ -234,6 +281,7 @@
         _.each(iniciativas, function(iniciativa) {
             var marca_iniciativa = {
                     type : 'flags',
+                    name: 'iniciativas',
                     data : [{
                         //x : Date.UTC(iniciativa.year, iniciativa.month, iniciativa.day),
                         x : iniciativa.fecha_creacion,

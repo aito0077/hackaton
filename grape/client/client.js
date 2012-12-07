@@ -206,7 +206,11 @@ Template.iniciativaForm.events({
   },
 
   'click .generarIniciativas':function(){
-        generador_aleatorio(100);
+        if (Meteor.userId() === null){
+          mostrarMensaje('Debes ingresar al sitio para participar :)', 'error');
+          return;
+        }
+        generador_aleatorio(100, Meteor.userId());
    },
   'click .guardarIniciativa':function(){
     if (Meteor.userId() === null){

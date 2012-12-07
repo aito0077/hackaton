@@ -92,7 +92,7 @@ descripciones = [
 
 paises = ['PER', 'BOL', 'COL', 'BRA', 'CHL', 'ARG'];
 
-function generador_aleatorio(cantidad) {
+function generador_aleatorio(cantidad, usuarioId) {
     for(var i = 0; i <= cantidad; i++) {
 
         var titulo =  titulos[getRandomInt(0, titulos.length -1)];
@@ -117,7 +117,7 @@ function generador_aleatorio(cantidad) {
             }],
             fecha_creacion: date_utc,
             pais: pais,
-            creador: '4bee2d12-8eaf-411a-85f4-c3acd4142410'
+            creador: usuarioId
         };
  
         var res = Meteor.call('generarIniciativa',iniciativa,function(error,iniciativa){
