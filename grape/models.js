@@ -24,6 +24,13 @@ Iniciativas.allow({
 	//fetch: ['owner']
 });
 
+
+if (Meteor.isServer) {
+    Meteor.publish("Iniciativas", function () {
+          return Iniciativas.find();
+    });
+}
+
 Meteor.methods({
 	crearIniciativa: function (options) {
 		options = options || {};
@@ -54,6 +61,10 @@ Meteor.methods({
    		return Iniciativas.insert(options);
    	},
 
+	generarIniciativa: function (options) {
+   		return Iniciativas.insert(options);
+   	},
+
     //find_pais_indicador: function(paises, cod_indicador) {
     find_pais_indicador: function(paises, tipo) {
         if(!paises.length) {
@@ -63,8 +74,8 @@ Meteor.methods({
 
         var tipo_indicador = find_indicador_por_tipo(tipo);
         var iniciativas_paises_tipo = Iniciativas.find({
+            'pais': 'ARG',
             'tipo': tipo
-            //'Country Code': {'$in': paises},    
         });
         var iniciativas_data = [];
         iniciativas_paises_tipo.forEach(function (iniciativa) {
@@ -86,7 +97,7 @@ Meteor.methods({
 
         return {
             data: data,
-            iniciativa: iniciativas_data,
+            iniciativas: iniciativas_data,
             tipo_indicador: tipo_indicador
         };
     },
@@ -114,6 +125,7 @@ Meteor.methods({
                 latlng: ''+latitud+','+longitud+'',
                 sensor: true
             }}); 
+            console.dir(result);
             var pais = 'Argentina',
                 provincia = '',
                 localidad = '',

@@ -204,6 +204,10 @@ Template.iniciativaForm.events({
       console.log(tareas);
     }
   },
+
+  'click .generarIniciativas':function(){
+        generador_aleatorio(100);
+   },
   'click .guardarIniciativa':function(){
     if (Meteor.userId() === null){
       mostrarMensaje('Debes ingresar al sitio para participar :)', 'error');

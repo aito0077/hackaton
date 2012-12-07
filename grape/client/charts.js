@@ -6,9 +6,8 @@
         console.log('chart rendered');
         if (Meteor.is_client) {
 
-            //Meteor.call('find_pais_indicador', ['ARG', 'BOL', 'BRA'], 'NY.ADJ.DMIN.GN.ZS', function(err,response) {
             //Meteor.call('find_pais_indicador', ['ARG', 'BOL', 'BRA'], 'Reciclado', function(err,response) {
-            Meteor.call('find_pais_indicador', [], 'Mercado Comunal', function(err,response) {
+            Meteor.call('find_pais_indicador', [], 'Ecologia Urbana', function(err,response) {
                 if(err) {
                     Session.set('serverDataResponse', "Error:" + err.reason);
                     return;
@@ -16,6 +15,8 @@
                 Session.set('paises_indicadores', response.data);
                 Session.set('tipo_indicador', response.tipo_indicador);
                 Session.set('iniciativas', response.iniciativas);
+                console.log('volvio llamada find_pais_indicador');
+                console.dir(response.iniciativas);
                 console.dir(response.tipo_indicador);
 
                 try {
@@ -28,6 +29,7 @@
     }
 
     function render_chart() {
+        console.log('Render Chart!');
         var collection = Session.get('paises_indicadores');
         var tipo_indicador = Session.get('tipo_indicador');
         var iniciativas = Session.get('iniciativas');
@@ -128,6 +130,7 @@
             xAxis: {
                 type: 'datetime',
                 maxZoom: 14 * 24 * 3600000, // fourteen days
+                maxPadding: 0.10,
                 title: {
                     text: options.x_title
                 }
@@ -138,9 +141,11 @@
                 },
                 gridLineColor: '#FFFFFF',
                 min: 0,
+                maxPadding: 0.10,
                 startOnTick: false,
                 showFirstLabel: false
             },
+
             tooltip: {
                 enabled: false
             },
@@ -150,7 +155,17 @@
                     enabled: false
                 }
             },
+            plotOptions: {
+                flags: {
+                    tooltip: {
+                        enabled: true,
+                        formatter: function() {
+                            return '<image href="'+shape+'"></image>';
+                        }
+                    }
 
+                }
+            }
         });
     }
 
@@ -225,17 +240,23 @@
                         text : iniciativa.titulo 
                     }],
                     onSeries : iniciativa.pais,
-                    shape: shape,
+                    //shape: shape,
+                    shape: 'circlepin',
                     showInLegend: false,
-                    width : 16,
+                    //width : 16,
+                    dataLabels: {
+                        useHTML: true,
+                        formatter: function() {
+                            return '<image href="'+shape+'"></image>';
+                        }
+                    },
                     events: {
                         click: click_iniciativa_chart
                         //mouseOver: mouseover_iniciativa_chart, 
                         //mouseOut: mouseout_iniciativa_chart
                     },
                     cursor: 'hand',
-                    title: '',
-                    pointPlacement: 'on'
+                    title: 'I'//,
             };
             series.push(marca_iniciativa);
         });
