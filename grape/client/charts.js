@@ -64,15 +64,27 @@
                 try {
                     value = parseFloat(value);
                 } catch(e) {console.log(e);}
+                /*
                 country_data.push([
                     Date.UTC(periodo, 0, 1),
                     value||0
                 ]); 
+                */
+                country_data.push({
+                    x: Date.UTC(periodo, 0, 1),
+                    y: value||0
+                }); 
             });
+            /*
             country_data.push([
                 Date.UTC(2013, 0, 1),
                 old_value
             ]); 
+            */
+            country_data.push({
+                x: Date.UTC(2013, 0, 1),
+                y: old_value
+            }); 
             var serie = {
                     name: country['Country Name'],
                     id: country['Country Code'],
@@ -91,8 +103,9 @@
 
         Session.set('current_categoria', tipo_indicador.categoria);
 
-        posicionar_iniciativas(series, iniciativas);
-
+    
+        //posicionar_iniciativas(series, iniciativas);
+        agregar_iniciativas(series, iniciativas);
         render_line_chart(series, options);
 
     }
@@ -176,25 +189,31 @@
                     enabled: false
                 }
             },
+            /*
             tooltip: {
+                crosshairs: false,
+                shared: false,
                 enabled: true,
                 useHTML: true,
                 formatter: function(){
-                    return this.serie.name;
-                    /*
                     if(this.series.name == 'iniciativas') {
                         return '<image href="'+shape+'"></image>';
                     }
                     else {
                         return "";
                     }
-                    */
                 }                
             },
+
             plotOptions: {
                 spline: {
                     tooltip: {
                         enabled: false
+                    },
+                    marker: {
+                        radius: 4,
+                        lineColor: '#666666',
+                        lineWidth: 1
                     }
                 },
                 line: {
@@ -213,6 +232,7 @@
 
                 }
             }
+            */
         });
     }
 
@@ -255,6 +275,63 @@
         console.log('over');
         console.dir(evento);
     }
+
+    function agregar_iniciativas(series, iniciativas) {
+        var icon_image = 'medioAmbiente.png';
+        switch(this.Session.get('current_categoria')) {
+            case "Medio Ambiente":
+                icon_image = 'medioAmbiente.png';
+                break; 
+            case "Educacion":
+                icon_image = 'educacion.png';
+                break; 
+            case "Desarrollo":
+                icon_image = 'desarrolloSocial.png';
+                break; 
+            case "Arte y Cultura":
+                icon_image = 'arteCultura.png';
+                break; 
+            default: 
+                icon_image = 'medioAmbiente.png';
+                break; 
+        }
+        var shape = 'url(/images/'+icon_image+')';
+ 
+        _.each(iniciativas, function(iniciativa) {
+            var year = new Date(iniciativa.fecha_creacion).getFullYear();
+            var rango_year = Date.UTC(year, 0, 1);
+            var y_value = 0;
+            var serie_a_agregar = [];
+            _.each(series, function(serie) {
+               if(serie.id == iniciativa.pais) {
+                    serie_a_agregar = serie;
+                    _.each(serie.data, function(datum) {
+                        if(datum['x'] == rango_year) {
+                            y_value =  datum['y'];
+                        }
+                    });
+               } 
+            });
+            var marca = {
+                x: iniciativa.fecha_creacion,
+                y: y_value,
+                marker: {
+                    enabled: true,
+                    symbol: shape
+                },
+                text: iniciativa.titulo
+            };
+            serie_a_agregar.data.push(marca);
+        });
+        _.each(series, function(serie) {
+            serie.data = _.sortBy(serie.data, function(dato) {
+                return dato['x'];
+            });
+        });
+
+
+    }
+
 
     function posicionar_iniciativas(series, iniciativas) {
         var self = this;

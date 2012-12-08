@@ -31,6 +31,10 @@ if (Meteor.isServer) {
     });
 }
 
+if (Meteor.isClient) {
+    Meteor.subscribe("Iniciativas");
+}
+
 Meteor.methods({
 	crearIniciativa: function (options) {
 		options = options || {};
@@ -115,6 +119,18 @@ Meteor.methods({
         });
         return data;
     },
+
+
+    traer_ultimas_iniciativas_categoria: function(categoria, limite) {
+        var ret = Iniciativas.find({categoria:categoria},{sort:{fecha_creacion:-1}});
+        var items = ret.fetch().slice(0, limite);
+        var cantidad = ret.count();
+        return {
+            items: items,
+            cantidad: cantidad
+        };
+    },
+
 
     obtener_pais_desde_localizacion: function (latitud, longitud) {
         this.unblock();
