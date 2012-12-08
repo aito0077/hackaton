@@ -5,30 +5,23 @@
     posisionate_in_my_location = true
     zoom_my_location = 13;
 
-
-
     Template.mapa.rendered = function(){
-
        console.log('map rendered');
        var ret = Iniciativas.find().fetch();
        initialize(ret);
-
    };
-
 
     //Google maps
     function initialize(options) {
-
         var results = [];
         _.each(options,function(iniciativa){
             if (typeof iniciativa.lat === 'undefined'){
             }else{
                 results.push({
-                    doc:iniciativa
+                    doc: iniciativa
                 });
             }
         })
-        
         
         var latlng = new google.maps.LatLng(my_latitude, my_longitude);
         var myOptions = {
@@ -76,8 +69,6 @@
                 marker.info.open(map, marker);
             });
         });
-
-        
     }
 
     if(posisionate_in_my_location) {

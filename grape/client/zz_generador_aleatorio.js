@@ -89,6 +89,8 @@ descripciones = [
     "Unite a nosotros para realizar ",
 ];
 
+buenos_aires = [ ];
+
 
 paises = ['PER', 'BOL', 'COL', 'BRA', 'CHL', 'ARG'];
 
@@ -105,6 +107,15 @@ function generador_aleatorio(cantidad, usuarioId) {
         var dia =  getRandomInt(0, 28);
         var date_utc = Date.UTC(anio, mes, dia);
         var pais =  paises[getRandomInt(0, paises.length -1)];
+
+        var latitud =  null;
+        var longitud =  null;
+        if(geo[pais]) {
+            var latitudes = geo[pais].Latitud;
+            var longitudes = geo[pais].Longitud;
+            latitud =  latitudes[getRandomInt(0, latitudes.length -1)];
+            longitud=  longitudes[getRandomInt(0, longitudes.length -1)];
+        }
         var iniciativa = {
             titulo: titulo,
             descripcion: descripcion,
@@ -117,7 +128,10 @@ function generador_aleatorio(cantidad, usuarioId) {
             }],
             fecha_creacion: date_utc,
             pais: pais,
-            creador: usuarioId
+            creador: usuarioId,
+            latitud: latitud,
+            longitud: longitud,
+            aleatorio: true
         };
  
         var res = Meteor.call('generarIniciativa',iniciativa,function(error,iniciativa){
@@ -132,3 +146,16 @@ function getRandomInt (min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
  
+
+var geo = {
+    'ARG': {
+        Latitud: [-34.56199, -34.564252, -34.57443, -34.603, -34.604107, -34.609, -34.616, -34.618, -34.624, -34.647331, -34.652, -34.655, -34.659758, -34.680],
+        Longitud: [-58.521629 ,-58.407543 ,-58.471401 ,-58.526 ,-58.408522 ,-58.531 ,-58.540 ,-58.529 ,-58.544 ,-58.365658 ,-58.513 ,-58.565 ,-58.509853 ,-58.550 ]
+    },
+    'CHL': {
+        Latitud: [ -33.559, -33.191, -33.157, -33.339, -32.937, -33.166, -33.339, -32.937 ],
+        Longitud: [ -71.283 ,-70.943 ,-71.202 ,-70.793 ,-70.381 ,-70.719 ,-70.793 ,-70.381 ]
+    }
+
+
+}
